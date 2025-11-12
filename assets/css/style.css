@@ -1,0 +1,343 @@
+/* ==========================================================
+   Move & Go Theme (teal + cream)
+   Palette harmonisée et modernisée
+   ========================================================== */
+:root{
+  --mg-teal:#1f838a;          /* fond pastel principal */
+  --mg-teal-dark:#1b848a;
+  --mg-ink:#243043;           /* texte foncé */
+  --mg-cream:#f3ede4;         /* blocs / cartes */
+  --mg-cream-2:#f6f1e8;
+  --mg-accent:#118a96;        /* boutons principaux */
+  --mg-white:#ffffff;
+  --mg-muted:#697386;
+  --mg-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+/* ==========================================================
+   Structure générale
+   ========================================================== */
+html,body{height:100%;}
+body.bg-surface {
+  background: linear-gradient(135deg,
+              #7ac4c8 0%,
+              #8ed1d4 35%,
+              #b8e2e0 75%,
+              #d3f0ee 100%);
+  color: var(--mg-ink);
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+/* ==========================================================
+   Navbar
+   ========================================================== */
+.navbar .brand{ color:#18404b; letter-spacing:.2px; }
+.navbar .nav-link{ color:#1e3743; }
+.navbar .nav-link:hover{ color:#0b2f37; }
+.btn-logout{
+  border:1px solid rgba(0,0,0,.15);
+  border-radius:.75rem;
+  padding:.4rem .9rem;
+  color:#1e3743;
+  background:var(--mg-cream);
+}
+.btn-logout:hover{ background:#e9e2d8; }
+
+/* ==========================================================
+   Hero Section
+   ========================================================== */
+.hero{
+  padding: clamp(2rem, 6vw, 4rem) 0 1rem;
+  text-align:center;
+}
+.hero h1{
+  font-weight:800;
+  letter-spacing:-.02em;
+  line-height:1.1;
+}
+.hero .cta{ margin-top:1rem; }
+
+/* Bouton primaire Move&Go */
+.btn-primary{
+  --bs-btn-bg: var(--mg-accent);
+  --bs-btn-border-color: var(--mg-accent);
+  --bs-btn-hover-bg: #0d6f78;
+  --bs-btn-hover-border-color:#0d6f78;
+  border-radius:.9rem;
+  padding:.65rem 1rem;
+}
+
+/* ==========================================================
+   Search bar
+   ========================================================== */
+.search-strip{
+  background: var(--mg-cream);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 1rem;
+  padding:.7rem;
+  box-shadow: var(--mg-shadow);
+}
+.search-strip .form-control,
+.search-strip .form-select{
+  border-radius:.8rem;
+  border:1px solid rgba(0,0,0,.12);
+}
+
+/* ==========================================================
+   Cartes d’annonces
+   ========================================================== */
+.card-move{
+  background: var(--mg-cream-2);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: var(--mg-shadow);
+  margin-bottom: 1rem;
+}
+.badge-soft{
+  display:inline-block;
+  background: rgba(255,255,255,.6);
+  border:1px solid rgba(0,0,0,.06);
+  color:#0b2f37;
+  padding:.2rem .5rem;
+  border-radius:.6rem;
+  font-weight:600;
+  font-size:.85rem;
+}
+.border-cream{ border-color: rgba(0,0,0,.1)!important; }
+
+/* ==========================================================
+   Étapes (icônes rondes)
+   ========================================================== */
+.step{text-align:center;}
+.circle{
+  width:84px; height:84px; border-radius:50%;
+  margin: 0 auto .6rem;
+  background: rgba(255,255,255,.35);
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(0,0,0,.08);
+}
+.step-title{ font-weight:600; }
+
+/* ==========================================================
+   Textes utilitaires
+   ========================================================== */
+.small-muted{ color: var(--mg-muted); font-size:.92rem; }
+a{ text-decoration:none; }
+
+/* ==========================================================
+   Pied de page
+   ========================================================== */
+footer{
+  background-color: #a7d3d6;
+  color: #123742;
+  font-weight: 500;
+}
+footer .small, footer div{ color: #103a40; }
+
+/* ==========================================================
+   Pages Auth
+   ========================================================== */
+.auth-wrap{
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+}
+.auth-card{
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.86));
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 1rem;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  padding: 1.5rem;
+}
+
+/* ==========================================================
+   Section statistiques (3 blocs)
+   ========================================================== */
+.stats-row .stat-card{
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+  border:1px solid rgba(0,0,0,.08);
+  border-radius: 1rem;
+  padding: .9rem 1rem;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.stat-label{ color:#2e5b61; font-weight:600; font-size:.9rem; }
+.stat-value{ font-weight:800; font-size:1.35rem; color:#0b2f37; letter-spacing:.5px; }
+
+/* Gutter Bootstrap symétrique */
+.row.g-3{
+  --bs-gutter-x: 2rem;
+  --bs-gutter-y: 2rem;
+}
+
+/* ==========================================================
+   Bloc “Tu n’as pas encore d’annonce”
+   ========================================================== */
+.empty-hero{
+  display:flex; gap:1.2rem; align-items:center;
+  background: rgba(255,255,255,.55);
+  border:1px dashed rgba(0,0,0,.15);
+  border-radius: 1rem;
+  padding: 1.2rem;
+}
+.empty-hero .illu{ flex:0 0 auto; }
+.empty-hero .content h2{ margin:0 0 .25rem; font-weight:800; color:#0b2f37; }
+.empty-hero .content p{ margin:0 0 .6rem; color:#2e5b61; }
+
+/* ==========================================================
+   Guides rapides
+   ========================================================== */
+.mini-guide{
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.83));
+  border:1px solid rgba(0,0,0,.08);
+  border-radius: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  height:100%;
+}
+.mini-guide .emoji{ font-size:1.4rem; }
+.mini-guide .title{ font-weight:800; margin-top:.25rem; color:#0b2f37; }
+.mini-guide .desc{ color:#2e5b61; font-size:.95rem; }
+
+/* ==========================================================
+   Bouton flottant +
+   ========================================================== */
+.fab{
+  position: fixed;
+  right: 20px;
+  bottom: 22px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: #118a96;
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 28px; font-weight:800;
+  box-shadow: 0 12px 24px rgba(0,0,0,.2);
+  text-decoration:none;
+}
+.fab:hover{ background:#0d6f78; color:#fff; transform: translateY(-1px); }
+
+/* ==========================================================
+   Message de bienvenue
+   ========================================================== */
+.welcome-banner{
+  text-align:center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin: 1.5rem auto 2rem;
+  padding: 0 1rem;
+  max-width: 980px;
+}
+.welcome-banner h1{
+  font-weight: 800;
+  color: #0b2f37;
+  margin-bottom: .6rem;
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+}
+.welcome-banner .username{ color:#118a96; }
+
+/* Sous-texte lisible et contrasté */
+.welcome-banner p{
+  margin: 0 auto;
+  max-width: 860px;
+  font-size: clamp(1rem, 1.2vw, 1.08rem);
+  font-weight: 600;
+  color: #123742;
+  line-height: 1.45;
+  background: rgba(255,255,255,.42);
+  border: 1px solid rgba(0,0,0,.04);
+  border-radius: .8rem;
+  padding: .55rem .9rem;
+  display: inline-block;
+}
+
+/* ==========================================================
+   Ajustements section "Mes annonces"
+   ========================================================== */
+.section-head {
+  margin-top: .5rem;
+  margin-bottom: .75rem;
+}
+.section-head .title{
+  font-size: clamp(1.35rem, 1.8vw, 1.6rem);
+  font-weight:800;
+  color:#0b2f37;
+}
+
+/* ==========================================================
+   Conteneur resserré
+   ========================================================== */
+.container-narrow{ max-width:1100px; margin:auto; }
+
+/* ==========================================================
+   Responsive : centrage du 3e bloc sur tablette
+   ========================================================== */
+@media (min-width: 768px) and (max-width: 1199.98px){
+  .stats-row .col-lg-4:last-child{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: calc(50% - 1rem);
+  }
+}
+/* === Espacement entre les stats et le bloc "Tu n’as pas encore d’annonce" === */
+.empty-hero {
+  margin-top: 2.5rem;   /* espace harmonieux sous les 3 cartes */
+}
+/* Nuances subtiles pour badges (teal/cream friendly) */
+.bg-success-subtle   { background: #d9f3f1; }
+.text-success-emphasis { color:#0b615e; }
+.border-success-subtle  { border-color:#bfe7e6 !important; }
+
+.bg-secondary-subtle   { background:#eef2f3; }
+.text-secondary-emphasis{ color:#425766; }
+.border-secondary-subtle{ border-color:#d7e1e6 !important; }
+
+/* ==========================================================
+   Footer collé en bas (sticky footer)
+   ========================================================== */
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* hauteur complète */
+}
+
+main {
+  flex: 1; /* pousse le footer vers le bas */
+}
+
+footer {
+  margin-top: auto; /* colle le footer au bas */
+}
+
+/* Description : liste (my_moves) */
+.move-desc{
+  color:#2e5b61;
+  margin-top:.45rem;
+  font-size:.96rem;
+  line-height:1.45;
+  background:rgba(255,255,255,.5);
+  border-radius:.5rem;
+  padding:.5rem .7rem;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+/* Description : fiche (move_detail) – un peu plus aérée */
+.move-desc-lg{
+  font-size:1rem;
+  padding:.7rem .9rem;
+  margin-top:.6rem;
+}
+
