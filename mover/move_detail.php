@@ -1,9 +1,16 @@
 <?php
-// mover/move_detail.php — Détail annonce + proposer un prix
+// mover/move_detail.php — Détail d'une annonce côté déménageur
 require __DIR__ . '/../include/header_mover.php';
 
-$moverId = (int)$u['id'];
+$u = current_user();
+$moverId = (int)($u['id'] ?? 0);
+
 $id = (int)($_GET['id'] ?? 0);
+if ($id <= 0) {
+    echo '<div class="container py-5"><div class="alert alert-danger">Annonce introuvable.</div></div>';
+    require __DIR__ . '/../include/footer.php';
+    exit;
+}
 
 // Récupération de l'annonce + infos client
 $st = $pdo->prepare("
@@ -20,39 +27,31 @@ $st->execute([$id]);
 $mv = $st->fetch(PDO::FETCH_ASSOC);
 
 if (!$mv) {
-  echo '<div class="container py-5"><div class="alert alert-danger">Annonce introuvable.</div></div>';
-  require __DIR__ . '/../include/footer.php';
-  exit;
+    echo '<div class="container py-5"><div class="alert alert-danger">Annonce introuvable.</div></div>';
+    require __DIR__ . '/../include/footer.php';
+    exit;
 }
 
-// Récupération de la dernière offre du déménageur
-$my = $pdo->prepare("SELECT * FROM offers WHERE move_id=? AND mover_id=? ORDER BY id DESC LIMIT 1");
+// Récupération de la dernière offre du déménageur (s'il y en a une)
+$my = $pdo->prepare("
+    SELECT *
+    FROM offers
+    WHERE move_id = ? AND mover_id = ?
+    ORDER BY id DESC
+    LIMIT 1
+");
 $my->execute([$id, $moverId]);
 $myOffer = $my->fetch(PDO::FETCH_ASSOC);
 
-$ok = null; 
-$err = null;
-
-// Envoi d'une nouvelle offre
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$myOffer) {
-  if (function_exists('check_csrf')) { check_csrf(); }
-
-  if ((int)$mv['is_active'] !== 1) {
-    $err = "L’annonce n’est plus active.";
-  } else {
-    $price   = (float)($_POST['price'] ?? 0);
-    $message = trim((string)($_POST['message'] ?? ''));
-
-    if ($price <= 0) {
-      $err = "Prix invalide.";
-    } else {
-      $ins = $pdo->prepare("INSERT INTO offers (move_id, mover_id, price, message, status) VALUES (?, ?, ?, ?, 'pending')");
-      $ins->execute([$id, $moverId, $price, $message]);
-      $ok = "Proposition envoyée.";
-      $my->execute([$id, $moverId]);
-      $myOffer = $my->fetch(PDO::FETCH_ASSOC);
+// Petit helper pour le badge de statut
+function offer_status_badge_class(string $status): string {
+    switch ($status) {
+        case 'accepted':  return 'badge bg-success';
+        case 'rejected':  return 'badge bg-danger';
+        case 'withdrawn': return 'badge bg-secondary';
+        case 'pending':
+        default:          return 'badge bg-warning text-dark';
     }
-  }
 }
 ?>
 <div class="container container-narrow">
@@ -61,18 +60,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$myOffer) {
     <a class="btn btn-outline-secondary" href="<?= url('mover/dashboard.php') ?>">← Retour</a>
   </div>
 
-  <?php if ($ok): ?><div class="alert alert-success"><?= htmlspecialchars($ok) ?></div><?php endif; ?>
-  <?php if ($err): ?><div class="alert alert-danger"><?= htmlspecialchars($err) ?></div><?php endif; ?>
-
   <div class="card-move mb-3">
     <div class="d-flex justify-content-between align-items-center mb-1">
-      <span class="badge-soft"><?= htmlspecialchars($mv['city_from']) ?> → <?= htmlspecialchars($mv['city_to']) ?></span>
+      <span class="badge-soft">
+        <?= htmlspecialchars($mv['city_from']) ?> → <?= htmlspecialchars($mv['city_to']) ?>
+      </span>
       <span class="small-muted"><?= htmlspecialchars($mv['d']) ?></span>
     </div>
+
     <h1 class="h6 mb-1"><?= htmlspecialchars($mv['title'] ?: 'Sans titre') ?></h1>
     <div class="small-muted mb-2"><?= (int)$mv['volume_m3'] ?> m³</div>
     
-    <?php if ($mv['description']): ?>
+    <?php if (!empty($mv['description'])): ?>
       <p class="small-muted mb-2"><?= nl2br(htmlspecialchars($mv['description'])) ?></p>
     <?php endif; ?>
 
@@ -90,45 +89,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$myOffer) {
   </div>
 
   <?php if ($myOffer): ?>
+    <!-- L'utilisateur a déjà une offre pour cette annonce -->
     <div class="card-move">
       <div class="h6 mb-2">Votre offre</div>
-      <div class="small mb-2">Prix : <strong><?= number_format((float)$myOffer['price'], 2, ',', ' ') ?> €</strong></div>
-      <?php if ($myOffer['message']): ?>
-        <div class="small-muted mb-2">Message : <?= nl2br(htmlspecialchars($myOffer['message'])) ?></div>
+
+      <div class="small mb-2">
+        Prix : 
+        <strong><?= number_format((float)$myOffer['price'], 2, ',', ' ') ?> €</strong>
+      </div>
+
+      <?php if (!empty($myOffer['message'])): ?>
+        <div class="small-muted mb-2">
+          Message : <?= nl2br(htmlspecialchars($myOffer['message'])) ?>
+        </div>
       <?php endif; ?>
-      <span class="badge 
-        <?= $myOffer['status']=='accepted'?'bg-success':
-            ($myOffer['status']=='rejected'?'bg-danger':
-             ($myOffer['status']=='withdrawn'?'bg-secondary':'bg-warning text-dark')) ?>">
-        <?= htmlspecialchars($myOffer['status']) ?>
-      </span>
+
+      <?php
+        $stLabel = htmlspecialchars($myOffer['status']);
+        $stClass = offer_status_badge_class($myOffer['status']);
+      ?>
+      <span class="<?= $stClass ?>"><?= $stLabel ?></span>
 
       <?php if ($myOffer['status'] === 'pending'): ?>
         <a class="btn btn-sm btn-outline-danger mt-2" 
            href="<?= url('mover/offer_toggle.php') ?>?id=<?= (int)$myOffer['id'] ?>&action=withdrawn"
-           onclick="return confirm('Retirer cette offre ?');">Retirer l’offre</a>
+           onclick="return confirm('Retirer cette offre ?');">
+          Retirer l’offre
+        </a>
       <?php endif; ?>
     </div>
-  <?php elseif ((int)$mv['is_active'] === 1): ?>
-    <div class="card-move">
-      <div class="h6 mb-2">Proposer un prix</div>
-      <form method="post">
-        <?php if (function_exists('csrf_field')) { csrf_field(); } ?>
-        <div class="row g-2">
-          <div class="col-12 col-md-4">
-            <label class="form-label">Prix (€)</label>
-            <input class="form-control" type="number" min="0" step="1" name="price" required>
-          </div>
-          <div class="col-12 col-md-8">
-            <label class="form-label">Message (optionnel)</label>
-            <input class="form-control" name="message" placeholder="Détails, disponibilité…">
-          </div>
-        </div>
-        <button class="btn btn-primary mt-3">Envoyer</button>
-      </form>
-    </div>
+
   <?php else: ?>
-    <div class="alert alert-info">Annonce inactive.</div>
+    <!-- Aucune offre encore envoyée par ce déménageur -->
+    <?php if ((int)$mv['is_active'] === 1): ?>
+      <div class="card-move">
+        <div class="h6 mb-2">Proposer un prix</div>
+        <p class="small-muted mb-3">
+          Vous n'avez pas encore fait de proposition pour cette annonce.
+        </p>
+        <a class="btn btn-primary"
+           href="<?= url('mover/offer_new.php?move_id=' . (int)$mv['id']) ?>">
+          Proposer un prix
+        </a>
+      </div>
+    <?php else: ?>
+      <div class="alert alert-info">
+        Cette annonce n’est plus active, vous ne pouvez plus proposer de prix.
+      </div>
+    <?php endif; ?>
   <?php endif; ?>
+
 </div>
+
 <?php require __DIR__ . '/../include/footer.php'; ?>

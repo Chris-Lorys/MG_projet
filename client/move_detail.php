@@ -25,17 +25,21 @@ if (!$move || (int)$move['client_id'] !== (int)$u['id']) {
   exit;
 }
 
-// --- POST : acceptation d'une offre ---
-if (
-  $_SERVER['REQUEST_METHOD'] === 'POST'
-  && isset($_POST['action']) && $_POST['action'] === 'accept'
-) {
+// --- POST : accepter ou refuser une offre ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+
+  $action = $_POST['action'];
+  if (!in_array($action, ['accept','reject'], true)) {
+    header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
+    exit;
+  }
+
   if (function_exists('check_csrf')) { check_csrf(); }
 
   $offerId = (int)($_POST['offer_id'] ?? 0);
 
   // Vérifier que l'offre est bien liée à ce move
-  $check = $pdo->prepare("SELECT id FROM offers WHERE id = ? AND move_id = ?");
+  $check = $pdo->prepare("SELECT id, status FROM offers WHERE id = ? AND move_id = ?");
   $check->execute([$offerId, $moveId]);
   $offer = $check->fetch(PDO::FETCH_ASSOC);
 
@@ -44,33 +48,52 @@ if (
     exit;
   }
 
-  // Déjà un accepted ?
-  $st = $pdo->prepare("SELECT COUNT(*) FROM offers WHERE move_id = ? AND status = 'accepted'");
-  $st->execute([$moveId]);
-  $acceptedCount = (int)$st->fetchColumn();
+  // Action : accepter
+  if ($action === 'accept') {
 
-  if ($acceptedCount > 0) {
-    header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
-    exit;
+    // Déjà un accepted ?
+    $st = $pdo->prepare("SELECT COUNT(*) FROM offers WHERE move_id = ? AND status = 'accepted'");
+    $st->execute([$moveId]);
+    $acceptedCount = (int)$st->fetchColumn();
+
+    if ($acceptedCount > 0) {
+      header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
+      exit;
+    }
+
+    // Transaction : accepter cette offre, rejeter les autres, mettre l'annonce en pause
+    $pdo->beginTransaction();
+    try {
+      $pdo->prepare("UPDATE offers SET status='accepted' WHERE id=?")->execute([$offerId]);
+      $pdo->prepare("UPDATE offers SET status='rejected' WHERE move_id=? AND id<>?")
+          ->execute([$moveId, $offerId]);
+
+      // Désactiver l'annonce (pause) une fois le déménageur choisi
+      $pdo->prepare("UPDATE moves SET is_active = 0 WHERE id = ?")->execute([$moveId]);
+
+      $pdo->commit();
+      header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=offer_accepted'));
+      exit;
+
+    } catch (Exception $e) {
+      $pdo->rollBack();
+      header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
+      exit;
+    }
   }
 
-  // Transaction : accepter cette offre, rejeter les autres, mettre l'annonce en pause
-  $pdo->beginTransaction();
-  try {
-    $pdo->prepare("UPDATE offers SET status='accepted' WHERE id=?")->execute([$offerId]);
-    $pdo->prepare("UPDATE offers SET status='rejected' WHERE move_id=? AND id<>?")
-        ->execute([$moveId, $offerId]);
+  // Action : refuser (on passe juste cette offre à "rejected")
+  if ($action === 'reject') {
+    // On ne refuse que si elle n'est pas déjà acceptée / rejetée
+    if ($offer['status'] !== 'pending') {
+      header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
+      exit;
+    }
 
-    // Désactiver l'annonce (pause) une fois le déménageur choisi
-    $pdo->prepare("UPDATE moves SET is_active = 0 WHERE id = ?")->execute([$moveId]);
+    $up = $pdo->prepare("UPDATE offers SET status='rejected' WHERE id = ? AND move_id = ? AND status='pending'");
+    $up->execute([$offerId, $moveId]);
 
-    $pdo->commit();
-    header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=offer_accepted'));
-    exit;
-
-  } catch (Exception $e) {
-    $pdo->rollBack();
-    header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=action_invalide'));
+    header('Location: ' . url('client/move_detail.php?id=' . $moveId . '&msg=offer_rejected'));
     exit;
   }
 }
@@ -124,6 +147,7 @@ require __DIR__ . '/../include/header_client.php';
 $flashKey = $_GET['msg'] ?? null;
 $flashMap = [
   'offer_accepted' => ['type' => 'success', 'text' => "Déménageur choisi avec succès. L'annonce est maintenant en pause."],
+  'offer_rejected' => ['type' => 'info',    'text' => "L’offre de ce déménageur a été refusée."],
   'images_ok'      => ['type' => 'success', 'text' => "Images ajoutées avec succès."],
   'action_invalide'=> ['type' => 'warning', 'text' => "Action invalide ou refusée."],
 ];
@@ -185,7 +209,7 @@ $flashMap = [
     </div>
   </div>
 
-  <!-- Galerie d’images (si des images existent) -->
+  <!-- Galerie d’images -->
   <?php if ($images): ?>
     <div class="mb-4">
       <div class="small-muted mb-2" style="font-weight:600;">Photos</div>
@@ -202,8 +226,6 @@ $flashMap = [
       </div>
     </div>
   <?php endif; ?>
-
- 
 
   <!-- Liste des propositions -->
   <div class="d-flex align-items-center justify-content-between section-head">
@@ -242,15 +264,31 @@ $flashMap = [
             </div>
           </div>
 
-          <div class="mt-3 d-flex gap-2">
-            <?php if ($acceptedAny === 0 && !$isRejected): ?>
-              <form method="post" action="<?= url('client/move_detail.php?id=' . $moveId) ?>">
+          <div class="mt-3 d-flex gap-2 flex-wrap">
+
+            <!-- Bouton de messagerie -->
+            <a class="btn btn-sm btn-outline-secondary"
+               href="<?= url('client/questions.php?offer_id=' . (int)$of['id']) ?>">
+              Messagerie
+            </a>
+
+            <!-- Boutons accepter / refuser (uniquement si aucune offre encore acceptée et si celle-ci n'est pas rejetée) -->
+            <?php if ($acceptedAny === 0 && !$isRejected && !$isAccepted): ?>
+              <form method="post" action="<?= url('client/move_detail.php?id=' . $moveId) ?>" class="d-inline">
                 <?php if (function_exists('csrf_field')) { csrf_field(); } ?>
                 <input type="hidden" name="action" value="accept">
                 <input type="hidden" name="offer_id" value="<?= (int)$of['id'] ?>">
                 <button class="btn btn-sm btn-primary" type="submit">Choisir ce déménageur</button>
               </form>
+
+              <form method="post" action="<?= url('client/move_detail.php?id=' . $moveId) ?>" class="d-inline">
+                <?php if (function_exists('csrf_field')) { csrf_field(); } ?>
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="offer_id" value="<?= (int)$of['id'] ?>">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Refuser ce déménageur</button>
+              </form>
             <?php endif; ?>
+
           </div>
         </div>
       </div>

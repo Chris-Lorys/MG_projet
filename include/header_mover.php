@@ -31,47 +31,24 @@ $initials = mg_initials($displayName, $u['prenom'] ?? null, $u['nom'] ?? null);
   <title>Move & Go — Espace déménageur</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
   <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
   <link rel="icon" href="<?= asset('assets/img/logo.png') ?>" type="image/png">
 
-  <style>
-    <main style="padding-top: 64px;">
-    /* Topbar (copie du client, renommée) */
-    .mover-topbar{
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1030;
-      background: #ffffff;
-      border-bottom: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 6px 18px rgba(0,0,0,.06);
-    }
-    .mover-topbar .brand{font-weight:800;color:#103a40;letter-spacing:.2px}
-    .hamburger-btn{border:1px solid rgba(0,0,0,.15);border-radius:.7rem;background:rgba(255,255,255,.65);padding:.45rem .7rem}
-    .hamburger-btn:focus{box-shadow:0 0 0 .2rem rgba(17,138,150,.15)}
-
-    /* Offcanvas */
-    .offcanvas-mover .user-name{font-weight:800;color:#0b2f37}
-    .offcanvas-mover .muted{color:#2e5b61}
-    .offcanvas-mover .list-group-item{border:none;border-radius:.7rem;margin-bottom:.35rem}
-    .offcanvas-mover .list-group-item:hover{background:rgba(16,58,64,.08)}
-    .btn-logout{font-weight:700;border-radius:.8rem;border:1px solid #b42b2b;color:#b42b2b}
-    .btn-logout:hover{background:#b42b2b;color:#fff}
-
-    /* Avatar (optionnel) */
-    .avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      font-weight:800;letter-spacing:.5px;color:#0b2f37;border:1px solid rgba(0,0,0,.08);
-      background: radial-gradient(circle at 30% 30%, #ffffff, #bfe7e6 70%, #9ed8d7 100%);
-      box-shadow:0 8px 16px rgba(0,0,0,.08)}
-  </style>
+  
+   
+    
+ 
 </head>
 
 <body class="bg-surface">
 
 <header class="mover-topbar py-3">
   <div class="container d-flex justify-content-between align-items-center">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('mover/dashboard.php') ?>">
-      <img src="<?= asset('assets/img/logo.png') ?>" alt="Move & Go" width="100" height="100">
-      <span class="brand fs-5">Move&Go</span>
+    <a class="navbar-brand d-flex align-items-center gap-2" href="">
+      <img src="<?= asset('assets/img/logo.png') ?>" alt="Move & Go" width="150" height="150">
+     
     </a>
 
     <div class="d-flex align-items-center gap-2">
