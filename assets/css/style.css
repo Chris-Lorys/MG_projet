@@ -18,6 +18,13 @@
    Structure générale
    ========================================================== */
 html,body{height:100%;}
+body {
+  display: flex;
+  flex-direction: column;
+}
+main {
+  padding-top:100px;
+}
 body.bg-surface {
   background: linear-gradient(135deg,
               #7ac4c8 0%,
@@ -30,7 +37,7 @@ body.bg-surface {
 }
 
 /* ==========================================================
-   Navbar
+   Navbar Bootstrap (ancienne)
    ========================================================== */
 .navbar .brand{ color:#18404b; letter-spacing:.2px; }
 .navbar .nav-link{ color:#1e3743; }
@@ -125,16 +132,6 @@ body.bg-surface {
    ========================================================== */
 .small-muted{ color: var(--mg-muted); font-size:.92rem; }
 a{ text-decoration:none; }
-
-/* ==========================================================
-   Pied de page
-   ========================================================== */
-footer{
-  background-color: #a7d3d6;
-  color: #123742;
-  font-weight: 500;
-}
-footer .small, footer div{ color: #103a40; }
 
 /* ==========================================================
    Pages Auth
@@ -287,11 +284,13 @@ footer .small, footer div{ color: #103a40; }
     max-width: calc(50% - 1rem);
   }
 }
-/* === Espacement entre les stats et le bloc "Tu n’as pas encore d’annonce" === */
+
+/* Espacement “Tu n’as pas encore d’annonce” */
 .empty-hero {
-  margin-top: 2.5rem;   /* espace harmonieux sous les 3 cartes */
+  margin-top: 2.5rem;
 }
-/* Nuances subtiles pour badges (teal/cream friendly) */
+
+/* Nuances subtiles pour badges */
 .bg-success-subtle   { background: #d9f3f1; }
 .text-success-emphasis { color:#0b615e; }
 .border-success-subtle  { border-color:#bfe7e6 !important; }
@@ -299,27 +298,6 @@ footer .small, footer div{ color: #103a40; }
 .bg-secondary-subtle   { background:#eef2f3; }
 .text-secondary-emphasis{ color:#425766; }
 .border-secondary-subtle{ border-color:#d7e1e6 !important; }
-
-/* ==========================================================
-   Footer collé en bas (sticky footer)
-   ========================================================== */
-html, body {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* hauteur complète */
-}
-
-main {
-  flex: 1; /* pousse le footer vers le bas */
-}
-
-footer {
-  margin-top: auto; /* colle le footer au bas */
-}
 
 /* Description : liste (my_moves) */
 .move-desc{
@@ -334,10 +312,431 @@ footer {
   box-shadow:0 2px 6px rgba(0,0,0,.05);
 }
 
-/* Description : fiche (move_detail) – un peu plus aérée */
-.move-desc-lg{
-  font-size:1rem;
-  padding:.7rem .9rem;
-  margin-top:.6rem;
+/* ===== HEADER / NAVBAR ===== */
+
+.mg-header {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
 }
 
+.mg-header-inner {
+  padding: 0.7rem 0;
+}
+
+.mg-logo {
+  height: 200px;
+  width: auto;
+}
+
+/* Liens navbar desktop */
+.mg-nav-link {
+  font-weight: 500;
+  color: #0b2f37;
+  text-decoration: none;
+  position: relative;
+}
+
+.mg-nav-link:hover {
+  color: #0b7076;
+}
+
+.mg-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: #0b7076;
+  transition: width .25s;
+}
+
+.mg-nav-link:hover::after {
+  width: 100%;
+}
+
+/* Boutons Connexion / Inscription (desktop) */
+.mg-nav-cta {
+  background: #0b7076;
+  color: #fff;
+  padding: .45rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mg-nav-cta:hover {
+  background: #095860;
+  color: #fff;
+}
+
+/* Bouton hamburger */
+.mg-nav-toggle {
+  background-color: #ffffff;
+  border-radius: 999px;
+  padding: .3rem .7rem;
+  border: 1px solid rgba(0,0,0,.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,.12);
+}
+
+.mg-nav-toggle i {
+  font-size: 1.6rem;
+  color: #0b2f37;
+}
+
+/* ========== PANNEAU LATÉRAL MOBILE ========== */
+.mg-sidepanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  max-width: 85%;
+  height: 100vh;
+  background: #f3ede4;
+  box-shadow: -10px 0 35px rgba(0,0,0,.25);
+  transform: translateX(100%);
+  transition: transform .28s ease-in-out;
+  z-index: 2000;
+}
+
+/* Bootstrap ajoute .show sur .collapse quand c'est ouvert */
+.mg-sidepanel.show {
+  transform: translateX(0);
+}
+
+.mg-sidepanel-inner {
+  padding-top: 4.5rem;    /* laisse de la place pour le header + bouton */
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Titre en haut du panneau */
+.mg-side-title {
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  color: #0b2f37;
+}
+
+/* Bouton fermer circulaire */
+.mg-close-btn {
+  background: #ffffff;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 6px 14px rgba(0,0,0,.20);
+}
+
+.mg-close-btn i {
+  font-size: 1.1rem;
+  color: #0b2f37;
+}
+
+/* Liens texte (Accueil / Infos) */
+.mg-side-link {
+  background: rgba(255,255,255,.7);
+  padding: .8rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #0b2f37;
+  text-align: center;
+  box-shadow: 0 5px 12px rgba(0,0,0,.08);
+}
+
+.mg-side-link:hover {
+  background: rgba(17,138,150,.10);
+  color: #0b7076;
+}
+
+/* Boutons Connexion / Inscription dans le panneau */
+.mg-side-btn {
+  background: #0b7076;
+  color: #fff;
+  padding: .85rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 18px rgba(0,0,0,.18);
+}
+
+.mg-side-btn:hover {
+  background: #095860;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* On cache complètement le panneau sur desktop */
+@media (min-width: 768px) {
+  .mg-sidepanel {
+    display: none !important;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+
+  /* Conteneur du collapse : on le transforme en panneau latéral */
+  #mgMobileNav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 280px;
+    max-width: 82%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    z-index: 1040;
+  }
+
+  /* Quand Bootstrap ajoute .show, on fait glisser le panneau */
+  #mgMobileNav.show {
+    transform: translateX(0);
+  }
+
+  /* Panneau lui-même */
+  .mg-sidebar {
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      #f7f1e8 0%,
+      #f3ede4 45%,
+      #e4f0ef 100%
+    );
+    box-shadow: -14px 0 30px rgba(0,0,0,.22);
+    padding: 1.5rem 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Bandeau du haut dans le panneau */
+  .mg-sidebar-header {
+    font-size: 0.9rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #123742;
+  }
+
+  .mg-sidebar-brand {
+   font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    color: #0b2f37;
+    text-align: center;
+    display: block;
+    width: 100%;
+    font-style: italic;
+  }
+
+  /* Bouton X de fermeture */
+  .mg-sidebar-close {
+    background-color: #ffffff;
+    border-radius: 999px;
+    padding: .15rem .45rem;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 6px 14px rgba(0,0,0,.12);
+  }
+
+  .mg-sidebar-close i {
+    font-size: 1rem;
+    color: #143b3f;
+  }
+
+  /* Zone des liens */
+  .mg-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Liens texte (Accueil / Infos) */
+  .mg-sidebar-link {
+    display: block;
+    padding: 0.65rem 0.9rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    color: #143b3f;
+    background: rgba(255,255,255,.85);
+    box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    text-align: center;
+  }
+
+  .mg-sidebar-link:hover {
+    background: #ffffff;
+    color: #0b7076;
+  }
+
+  .mg-sidebar-separator {
+    margin: 0.4rem 0 0.3rem;
+    border: none;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+
+  /* Boutons Connexion / Inscription */
+  .mg-sidebar-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    background: #0b7076;
+    color: #ffffff;
+    box-shadow: 0 14px 30px rgba(0,0,0,.18);
+  }
+
+  .mg-sidebar-btn:hover {
+    background: #095860;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+}
+
+
+  
+
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+footer{
+  background-color: #a7d3d6;
+  color: #123742;
+  font-weight: 500;
+}
+footer .small, footer div{ color: #103a40; }
+
+.mg-footer {
+  background: inherit;
+  border-top: 0;
+  flex-shrink: 0;
+  color: #0b2f37;
+  font-size: 0.95rem;
+  padding-top: 35px;
+}
+
+.mg-footer .footer-logo {
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+
+.mg-footer .footer-muted {
+  color: #2e5b61;
+}
+
+.mg-footer .footer-link {
+  color: #0b2f37;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mg-footer .footer-link i {
+  font-size: 1rem;
+}
+
+.mg-footer .footer-link:hover {
+  color: #0b7076;
+  text-decoration: underline;
+}
+
+.mg-footer .footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 111, 119, 0.08);
+  color: #0b2f37;
+  border: 1px solid rgba(15, 111, 119, 0.2);
+  font-weight: 600;
+}
+
+.mg-footer .footer-badge i {
+  font-size: 1rem;
+}
+
+/* Responsive : centrer mieux sur mobile */
+@media (max-width: 576px) {
+  .mg-footer .container {
+    text-align: center;
+  }
+}
+
+
+   .btn-outline-success{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
+
+  }
+
+  .btn-outline-danger{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
+
+  }
+
+  .btn-primary{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
+  }
+
+  .btn-outline-danger{
+  border-radius:.9rem;
+  padding:.65rem 1rem;
+  color:#fff;
+  background: #dc3545;
+}
+.btn-outline-danger:hover{
+  background: #a83c46ff;
+}
+.btn-outline-secondary{
+  border-radius:.9rem;
+  padding:.65rem 1rem;
+  color: #000000;
+}
+
+ /* Topbar (copie du client, renommée) */
+    .mover-topbar{
+      
+      top: 0; left: 0; right: 0;
+      z-index: 1030;
+      background:transparent;
+      border-bottom: none;
+      box-shadow: none;
+    }
+    .mover-topbar .brand{font-weight:800;color:#103a40;letter-spacing:.2px}
+    .hamburger-btn{border:1px solid rgba(0,0,0,.15);border-radius:.7rem;background:rgba(255,255,255,.65);padding:.45rem .7rem}
+    .hamburger-btn:focus{box-shadow:0 0 0 .2rem rgba(17,138,150,.15)}
+
+    /* Offcanvas */
+    .offcanvas-mover .user-name{font-weight:800;color:#0b2f37}
+    .offcanvas-mover .muted{color:#2e5b61}
+    .offcanvas-mover .list-group-item{border:none;border-radius:.7rem;margin-bottom:.35rem}
+    .offcanvas-mover .list-group-item:hover{background:rgba(16,58,64,.08)}
+    .btn-logout{font-weight:700;border-radius:.8rem;border:1px solid #b42b2b;color:#b42b2b}
+    .btn-logout:hover{background:#b42b2b;color:#fff}
+
+    
+
+    

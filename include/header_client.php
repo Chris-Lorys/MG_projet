@@ -31,6 +31,8 @@ $initials = mg_initials($displayName, $u['prenom'] ?? null, $u['nom'] ?? null);
   <title>Move & Go — Espace client</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
   <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
   <link rel="icon" href="<?= asset('assets/img/logo.png') ?>" type="image/png">
   <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
@@ -74,8 +76,8 @@ $initials = mg_initials($displayName, $u['prenom'] ?? null, $u['nom'] ?? null);
 <header class="client-topbar py-3">
  <div class="container d-flex justify-content-between align-items-center">
     <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('client/my_moves.php') ?>">
-      <img src="<?= asset('assets/img/logo.png') ?>" alt="Move & Go" width="100" height="100">   <!-- ✔ -->
-      <span class="brand fs-5">Move&Go</span>
+      <img src="<?= asset('assets/img/logo.png') ?>" alt="Move & Go" width="150" height="150">   <!-- ✔ -->
+     
     </a>
 
     <div class="d-flex align-items-center gap-2">

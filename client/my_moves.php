@@ -167,11 +167,6 @@ $flashMap = [
                 Voir les propositions
               </a>
 
-              <a class="btn btn-sm btn-outline-secondary"
-                 href="<?= url('client/move_preview.php?id=' . $id) ?>"
-                 target="_blank" rel="noopener">
-                 Aperçu public
-              </a>
 
               <?php if ($acceptedCnt === 0): ?>
                 <?php if ($isActive): ?>
@@ -194,7 +189,24 @@ $flashMap = [
   <?php endif; ?>
 
 </div>
+<style>
+  .btn-outline-success{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
 
+  }
+
+  .btn-outline-danger{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
+
+  }
+
+  .btn-primary{
+    border-radius: .9rem;
+      padding:.65rem 1rem;
+  }
+</style>
 <!-- Bouton flottant -->
 <a href="<?= url('client/create_move.php') ?>" class="fab" title="Créer une annonce">+</a>
 

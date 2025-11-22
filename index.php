@@ -11,7 +11,7 @@ $stmt = $pdo->query("
 ");
 $moves = $stmt->fetchAll();
 ?>
-<section class="hero">
+<div class="hero">
   <div class="container">
     <h1 class="display-5 mb-3">Déménager ensemble,<br> c'est plus simple !</h1>
     <div class="cta">
@@ -26,9 +26,9 @@ $moves = $stmt->fetchAll();
       </a>
     </div>
   </div>
-</section>
+</div>
 
-<section class="pb-4">
+<div class="pb-4">
   <div class="container">
     <div class="search-strip">
       <form class="row g-2 align-items-center" method="get" action="<?= url('search.php') ?>">
@@ -42,7 +42,7 @@ $moves = $stmt->fetchAll();
           <input name="to" class="form-control" placeholder="Ville d'arrivée">
         </div>
         <div class="col-12 col-md-2">
-          <input name="date" type="date" class="form-control" placeholder="jj/mm/aaaa">
+          <input name="date" type="date" class="form-control" >
         </div>
         <div class="col-12 col-md-auto d-grid">
           <button class="btn btn-primary" type="submit">Rechercher</button>
@@ -50,9 +50,9 @@ $moves = $stmt->fetchAll();
       </form>
     </div>
   </div>
-</section>
+</div>
 
-<section class="pt-4">
+<div class="pt-4">
   <div class="container">
     <div class="row g-3">
       <?php foreach ($moves as $mv): ?>
@@ -81,38 +81,38 @@ $moves = $stmt->fetchAll();
       <?php endif; ?>
     </div>
   </div>
-</section>
+      </div>
 
-<section class="py-5">
+<div class="py-5">
   <div class="container">
     <h2 class="h5 mb-3">Comment ça marche ?</h2>
     <div class="row g-4">
       <div class="col-6 col-lg-3">
         <div class="step">
-          <div class="circle"><img src="<?= asset('assets/img/add.svg') ?>" width="40" alt=""></div>
+          <div class="circle"><img src="<?= asset('assets/img/add.svg') ?>" width="40" alt="Add"></div>
           <div class="step-title">Créer une annonce</div>
         </div>
       </div>
       <div class="col-6 col-lg-3">
         <div class="step">
-          <div class="circle"><img src="<?= asset('assets/img/mail.svg') ?>" width="40" alt=""></div>
+          <div class="circle"><img src="<?= asset('assets/img/mail.svg') ?>" width="40" alt="Mail"></div>
           <div class="step-title">Recevoir des propositions</div>
         </div>
       </div>
       <div class="col-6 col-lg-3">
         <div class="step">
-          <div class="circle"><img src="<?= asset('assets/img/people.svg') ?>" width="40" alt=""></div>
+          <div class="circle"><img src="<?= asset('assets/img/people.svg') ?>" width="40" alt="People"></div>
           <div class="step-title">Choisir les déménageurs</div>
         </div>
       </div>
       <div class="col-6 col-lg-3">
         <div class="step">
-          <div class="circle"><img src="<?= asset('assets/img/truck.svg') ?>" width="40" alt=""></div>
+          <div class="circle"><img src="<?= asset('assets/img/truck.svg') ?>" width="40" alt="Truck"></div>
           <div class="step-title">Déménager</div>
         </div>
       </div>
     </div>
   </div>
-</section>
+      </div>
 
 <?php require __DIR__ . '/include/footer.php'; ?>

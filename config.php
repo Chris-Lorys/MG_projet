@@ -5,7 +5,7 @@
 
 /* ---------- Base de données ---------- */
 $DB_HOST = 'localhost';
-$DB_NAME = 'move_and_go';
+$DB_NAME = 'move&go';
 $DB_USER = 'root';
 $DB_PASS = 'root';
 
