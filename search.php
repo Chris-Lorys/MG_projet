@@ -25,7 +25,7 @@ $st = $pdo->prepare($sql); $st->execute($p); $moves = $st->fetchAll();
           </div>
           <h3 class="h6 mb-1"><?php echo htmlspecialchars($mv['title']); ?></h3>
           <div class="small-muted mb-2"><?php echo (int)$mv['volume_m3']; ?> m³</div>
-          <a class="btn btn-sm btn-primary" href="<?= url('move.php') ?>?id=<?php echo (int)$mv['id']; ?>">Voir</a>
+          <a class="btn btn-sm btn-primary" href="<?= url('visitor/move_preview_visitor.php') ?>?id=<?php echo (int)$mv['id']; ?>">Voir</a>
         </article>
       </div>
     <?php endforeach; ?>
@@ -34,4 +34,3 @@ $st = $pdo->prepare($sql); $st->execute($p); $moves = $st->fetchAll();
     <?php endif; ?>
   </div>
 </div>
-<?php require __DIR__ . '/include/footer.php'; ?>
